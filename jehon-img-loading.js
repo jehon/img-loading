@@ -39,8 +39,9 @@ class JehonImgLoading extends HTMLElement {
         this.#visible = this.shadowRoot.querySelector('#visible');
         this.#preload = this.shadowRoot.querySelector('#preload');
         this.#preload.addEventListener('load', () => {
-            this.#visible.setAttribute('src', this.#preload.getAttribute('src'));
-            // TODO: set custom event !
+            const url = this.#preload.getAttribute('src')
+            this.#visible.setAttribute('src', url);
+            this.dispatchEvent(new CustomEvent('load', { detail: url }));
         })
     }
 

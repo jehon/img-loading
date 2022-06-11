@@ -3,9 +3,6 @@
 
 <head>
     <title>Demo</title>
-    <script type="module">
-        import './jehon-img-loading.js'
-    </script>
 </head>
 
 <body>
@@ -13,6 +10,15 @@
     <div style="width:100px; height: 100px; background-color: gray">
         <jehon-img-loading src="waiting/1.jpg"> </jehon-img-loading>
     </div>
+
+    <script type="module">
+        import './jehon-img-loading.js'
+
+        const jil = document.querySelector("jehon-img-loading");
+        jil.addEventListener('load', event => {
+            console.log("load", event.detail);
+        })
+    </script>
 </body>
 
 </html>
