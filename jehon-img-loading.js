@@ -1,9 +1,11 @@
 
 export let WaitingWheel = '/waiting.gif';
 
+const urlAttribute = 'src';
+
 class JehonImgLoading extends HTMLElement {
 	static get observedAttributes() {
-		return ['src'];
+		return [urlAttribute];
 	}
 
 	/** @type {HTMLImageElement} */
@@ -32,8 +34,8 @@ class JehonImgLoading extends HTMLElement {
                 }
             </style>
             
-            <img id='visible'>
             <img id='preload'>
+            <img id='visible' src='${WaitingWheel}'>
         `;
 
 		this.#visible = this.shadowRoot.querySelector('#visible');
@@ -41,13 +43,14 @@ class JehonImgLoading extends HTMLElement {
 		this.#preload.addEventListener('load', () => {
 			const url = this.#preload.getAttribute('src');
 			this.#visible.setAttribute('src', url);
+			this.#preload.setAttribute('src', '');
 			this.dispatchEvent(new CustomEvent('load', { detail: url }));
 		});
 	}
 
 	attributeChangedCallback(attributeName, oldValue, newValue) {
 		switch (attributeName) {
-			case 'src':
+			case urlAttribute:
 				if (newValue != oldValue) {
 					this.loadAndDisplayImage(newValue);
 				}
@@ -58,23 +61,25 @@ class JehonImgLoading extends HTMLElement {
 	/**
 	 * Show a waiting wheel while the url-image is loading
 	 *
-	 * @param {string} url of the image to be loaded
+	 * @param {string} src of the image to be loaded
 	 * @returns {JehonImgLoading} for chaining
 	 */
-	loadImageWhileWaiting(url) {
-		this.#visible.setAttribute('url', WaitingWheel);
-		this.#preload.setAttribute('url', url);
+	loadImageWhileWaiting(src) {
+		this.setAttribute(urlAttribute, src);
+		this.#visible.setAttribute('src', WaitingWheel);
+		this.#preload.setAttribute('src', src);
 		return this;
 	}
 
 	/**
 	 * Stay on current image while the url-image is loading
 	 *
-	 * @param {string} url of the image to be loaded
+	 * @param {string} src of the image to be loaded
 	 * @returns {JehonImgLoading} for chaining
 	 */
-	loadAndDisplayImage(url) {
-		this.#preload.setAttribute('url', url);
+	loadAndDisplayImage(src) {
+		this.setAttribute('src', src);
+		this.#preload.setAttribute('src', src);
 		return this;
 	}
 }
