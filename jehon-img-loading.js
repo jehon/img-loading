@@ -2,20 +2,20 @@
 export let WaitingWheel = '/waiting.gif';
 
 class JehonImgLoading extends HTMLElement {
-    static get observedAttributes() {
-        return ['src']
-    }
+	static get observedAttributes() {
+		return ['src'];
+	}
 
-    /** @type {HTMLImageElement} */
-    #visible
+	/** @type {HTMLImageElement} */
+	#visible;
 
-    /** @type {HTMLImageElement} */
-    #preload
+	/** @type {HTMLImageElement} */
+	#preload;
 
-    constructor() {
-        super();
-        this.attachShadow({ mode: 'open' });
-        this.shadowRoot.innerHTML = `
+	constructor() {
+		super();
+		this.attachShadow({ mode: 'open' });
+		this.shadowRoot.innerHTML = `
             <style>
                 img {
                     width: 50px;
@@ -36,32 +36,47 @@ class JehonImgLoading extends HTMLElement {
             <img id='preload'>
         `;
 
-        this.#visible = this.shadowRoot.querySelector('#visible');
-        this.#preload = this.shadowRoot.querySelector('#preload');
-        this.#preload.addEventListener('load', () => {
-            const url = this.#preload.getAttribute('src')
-            this.#visible.setAttribute('src', url);
-            this.dispatchEvent(new CustomEvent('load', { detail: url }));
-        })
-    }
+		this.#visible = this.shadowRoot.querySelector('#visible');
+		this.#preload = this.shadowRoot.querySelector('#preload');
+		this.#preload.addEventListener('load', () => {
+			const url = this.#preload.getAttribute('src');
+			this.#visible.setAttribute('src', url);
+			this.dispatchEvent(new CustomEvent('load', { detail: url }));
+		});
+	}
 
-    attributeChangedCallback(attributeName, _oldValue, newValue) {
-        switch (attributeName) {
-            case 'src':
-                this.#visible.setAttribute('src', WaitingWheel);
-                this.#preload.setAttribute('src', newValue);
-                break;
-        }
-    }
+	attributeChangedCallback(attributeName, oldValue, newValue) {
+		switch (attributeName) {
+			case 'src':
+				if (newValue != oldValue) {
+					this.loadAndDisplayImage(newValue);
+				}
+				break;
+		}
+	}
 
-    loadImageWhileWaiting(url) {
-        this.#visible.setAttribute('url', WaitingWheel);
-        this.#preload.setAttribute('url', url);
-    }
+	/**
+	 * Show a waiting wheel while the url-image is loading
+	 *
+	 * @param {string} url of the image to be loaded
+	 * @returns {JehonImgLoading} for chaining
+	 */
+	loadImageWhileWaiting(url) {
+		this.#visible.setAttribute('url', WaitingWheel);
+		this.#preload.setAttribute('url', url);
+		return this;
+	}
 
-    loadAndDisplayImage(url) {
-        this.#preload.setAttribute('url', url);
-    }
+	/**
+	 * Stay on current image while the url-image is loading
+	 *
+	 * @param {string} url of the image to be loaded
+	 * @returns {JehonImgLoading} for chaining
+	 */
+	loadAndDisplayImage(url) {
+		this.#preload.setAttribute('url', url);
+		return this;
+	}
 }
 
 customElements.define('jehon-img-loading', JehonImgLoading);

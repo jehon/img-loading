@@ -1,11 +1,9 @@
 
-import Express from 'express'
+import Express from 'express';
 
 const express = new Express();
 
-express.use('/waiting', (req, res, next) => {
-    setTimeout(() => next(), 3000);
-});
+express.use('/waiting', (req, res, next) => setTimeout(() => next(), 3000));
 
 express.use(Express.static('.'));
 express.use(Express.static('demo'));
