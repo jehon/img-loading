@@ -4,15 +4,18 @@
     "description": "Show waiting wheel when loading image and/or fade to next one when ready",
     "repository": "https://github.com/jehon/img-loading",
     "license": "MIT",
+    "type": "module",
     "devDependencies": {
         "eslint": "8.17.0",
-        "jasmine": "4.2.0",
+        "express": "4.18.1",
+        "jasmine": "4.1.0",
         "jasmine-core": "4.2.0",
         "karma": "6.3.20",
         "karma-chrome-launcher": "3.1.1",
         "karma-jasmine": "5.0.1"
     },
     "scripts": {
+        "start": "node demo.js",
         "test": "karma start test/karma.conf.js --single-run",
         "test-continuously": "karma start test/karma.conf.js",
         "style": "eslint .",
