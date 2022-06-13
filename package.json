@@ -1,13 +1,14 @@
 {
     "name": "@jehon/img-loading",
-    "version": "0.1.0",
+    "version": "0.1.2",
     "description": "Show waiting wheel when loading image and/or fade to next one when ready",
     "repository": "https://github.com/jehon/img-loading",
     "license": "MIT",
     "type": "module",
+    "publishConfig": {
+        "access": "public"
+    },
     "devDependencies": {
-        "@semantic-release/changelog": "5.0.1",
-        "@semantic-release/git": "9.0.1",
         "eslint": "8.17.0",
         "eslint-plugin-jsdoc": "39.3.2",
         "express": "4.18.1",
@@ -15,7 +16,8 @@
         "jasmine-core": "4.2.0",
         "karma": "6.3.20",
         "karma-chrome-launcher": "3.1.1",
-        "karma-jasmine": "5.0.1"
+        "karma-jasmine": "5.0.1",
+        "semantic-release": "^17.4.7"
     },
     "scripts": {
         "start": "node demo.js",
@@ -23,6 +25,6 @@
         "xxtest": "karma start test/karma.conf.js --single-run",
         "xxtest-continuously": "karma start test/karma.conf.js",
         "lint": "eslint .",
-        "publish": "semantic-release-cli"
+        "publish": "semantic-release"
     }
 }

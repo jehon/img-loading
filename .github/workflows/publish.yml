@@ -6,11 +6,25 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    env:        
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
     steps:
     - name: Checkout
       uses: actions/checkout@v3
+
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+        cache: npm
+
+    - name: debug
+      run: echo "NPM_TOKEN ${#NPM_TOKEN}"
+
+    - name: Config NPM
+      run: npm config set '//registry.npmjs.org/:_authToken' '${NPM_TOKEN}'
+
     - name: Semantic Release
-      env:        
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       run: npm publish
