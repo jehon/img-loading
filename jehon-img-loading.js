@@ -88,5 +88,7 @@ class JehonImgLoading extends HTMLElement {
 	}
 }
 
+class JehonImageLoading extends JehonImgLoading { }
+
 customElements.define('jehon-img-loading', JehonImgLoading);
-customElements.define('jehon-image-loading', JehonImgLoading);
+customElements.define('jehon-image-loading', JehonImageLoading);
