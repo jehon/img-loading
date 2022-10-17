@@ -8,12 +8,6 @@ class JehonImgLoading extends HTMLElement {
 		return [urlAttribute];
 	}
 
-	/** @type {HTMLImageElement} */
-	#visible;
-
-	/** @type {HTMLImageElement} */
-	#preload;
-
 	constructor() {
 		super();
 		this.attachShadow({ mode: 'open' });
