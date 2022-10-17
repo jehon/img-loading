@@ -1,9 +1,14 @@
 
-export let WaitingWheel = 'waiting.gif';
+const root = import.meta.url.match(/.*\//);
+let WaitingWheel = root + '/waiting.gif';
 
 const urlAttribute = 'src';
 
 class JehonImgLoading extends HTMLElement {
+	static setWaitingWheelUrl(url) {
+		WaitingWheel = url;
+	}
+
 	static get observedAttributes() {
 		return [urlAttribute];
 	}
