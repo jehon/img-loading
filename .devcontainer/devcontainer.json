@@ -1,7 +1,7 @@
 {
 	"name": "Node.js",
 	"build": {
-		"dockerfile": "../Dockerfile"
+		"dockerfile": "Dockerfile"
 	},
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
