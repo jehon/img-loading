@@ -1,5 +1,5 @@
 
-export let WaitingWheel = '/waiting.gif';
+export let WaitingWheel = 'waiting.gif';
 
 const urlAttribute = 'src';
 
@@ -29,23 +29,13 @@ class JehonImgLoading extends HTMLElement {
                     height: 100%
                 }
 
-                img#preload {
+                img[state=loading] {
                     display: none;
                 }
             </style>
-            
-            <img id='preload'>
-            <img id='visible' src='${WaitingWheel}'>
+            <img src='${WaitingWheel}'>
+			<slot></slot>
         `;
-
-		this.#visible = this.shadowRoot.querySelector('#visible');
-		this.#preload = this.shadowRoot.querySelector('#preload');
-		this.#preload.addEventListener('load', () => {
-			const url = this.#preload.getAttribute('src');
-			this.#visible.setAttribute('src', url);
-			this.#preload.setAttribute('src', '');
-			this.dispatchEvent(new CustomEvent('load', { detail: url }));
-		});
 	}
 
 	attributeChangedCallback(attributeName, oldValue, newValue) {
@@ -61,25 +51,39 @@ class JehonImgLoading extends HTMLElement {
 	/**
 	 * Show a waiting wheel while the url-image is loading
 	 *
-	 * @param {string} src of the image to be loaded
+	 * @param {string} url of the image to be loaded
 	 * @returns {JehonImgLoading} for chaining
 	 */
-	loadImageWhileWaiting(src) {
-		this.setAttribute(urlAttribute, src);
-		this.#visible.setAttribute('src', WaitingWheel);
-		this.#preload.setAttribute('src', src);
+	loadImageWhileWaiting(url) {
+		this.loadAndDisplayImage(WaitingWheel, true);
+		this.loadAndDisplayImage(url, false);
 		return this;
 	}
 
 	/**
 	 * Stay on current image while the url-image is loading
 	 *
-	 * @param {string} src of the image to be loaded
+	 * @param {string} url of the image to be loaded
+	 * @param {boolean?} whenReady if the image need to be displayed directly
 	 * @returns {JehonImgLoading} for chaining
 	 */
-	loadAndDisplayImage(src) {
-		this.setAttribute('src', src);
-		this.#preload.setAttribute('src', src);
+	loadAndDisplayImage(url, whenReady = true) {
+		const el = document.createElement('img');
+		el.setAttribute('src', url);
+		el.setAttribute('state', 'loading');
+
+		el.addEventListener('load', () => {
+			el.setAttribute('state', 'loaded');
+			this.shadowRoot.querySelectorAll('img:not([loading])')
+				.forEach(img => img.remove());
+			this.shadowRoot.appendChild(el);
+			this.dispatchEvent(new CustomEvent('load', { detail: url }));
+		});
+
+		if (!whenReady) {
+			// Simulate that we are ready
+			el.dispatchEvent(new Event('load'));
+		}
 		return this;
 	}
 }
