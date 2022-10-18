@@ -30,3 +30,6 @@ jobs:
 
     - name: Semantic Release
       run: npm run publish
+
+    - name: Get version
+      run: git describe --tags --abbrev=0 >> $GITHUB_STEP_SUMMARY
