@@ -53,8 +53,8 @@ export default class JehonImageLoading extends HTMLElement {
                 }
 
             </style>
-            <img src='${WaitingWheel}'>
 			<slot></slot>
+            <img src='${WaitingWheel}' />
         `;
 
 		this.#currentURL = WaitingWheel;
