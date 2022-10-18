@@ -3,6 +3,7 @@ const root = import.meta.url.match(/.*\//);
 let WaitingWheel = root + '/waiting.png';
 
 const urlAttribute = 'src';
+const transitionTimeSecs = '0.5';
 
 export default class JehonImageLoading extends HTMLElement {
 	static setWaitingWheelUrl(url) {
@@ -25,16 +26,19 @@ export default class JehonImageLoading extends HTMLElement {
 				}
 
                 img {
+					position: relative;
 
                     width: 100%;
                     height: 100%;
 
-                    background-color: green;
                     object-fit: contain;
+
+					opacity: 1;
+					transition: opacity ${transitionTimeSecs}s linear;
                 }
 
-                img[state=loading] {
-                    display: none;
+                img[loading] {
+                    opacity: 0;
                 }
 
             </style>
@@ -75,13 +79,12 @@ export default class JehonImageLoading extends HTMLElement {
 	loadAndDisplayImage(url, whenReady = true) {
 		const el = document.createElement('img');
 		el.setAttribute('src', url);
-		el.setAttribute('state', 'loading');
+		el.setAttribute('loading', 1);
+		this.shadowRoot.appendChild(el);
 
 		el.addEventListener('load', () => {
-			el.setAttribute('state', 'loaded');
-			this.shadowRoot.querySelectorAll('img:not([loading])')
-				.forEach(img => img.remove());
-			this.shadowRoot.appendChild(el);
+			this.shadowRoot.querySelectorAll('img:not([loading])').forEach(img => img.remove());
+			el.removeAttribute('loading');
 			this.dispatchEvent(new CustomEvent('load', { detail: url }));
 		});
 
