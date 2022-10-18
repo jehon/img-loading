@@ -3,7 +3,7 @@ const root = import.meta.url.match(/.*\//);
 let WaitingWheel = root + '/waiting.png';
 
 const urlAttribute = 'src';
-const transitionTimeSecs = '0.5';
+const transitionTimeSecs = 0;
 /**
  *
  * System: 2 images presents
@@ -34,10 +34,12 @@ export default class JehonImageLoading extends HTMLElement {
 					display: block;
 					width: 100%;
 					height: 100%;
+
+					position: relative;
 				}
 
                 img {
-					position: relative;
+					position: absolute;
 
                     width: 100%;
                     height: 100%;
@@ -91,21 +93,31 @@ export default class JehonImageLoading extends HTMLElement {
 		if (url != this.#currentURL) {
 			this.#currentURL = url;
 
+			// All the others are now supposed to be loaded
+			this.querySelectorAll('img').forEach(el => el.removeAttribute('loading'));
+
+			// Create the new element, as "loading"
 			const el = document.createElement('img');
 			el.setAttribute('src', url);
 			el.setAttribute('loading', 1);
 			this.shadowRoot.appendChild(el);
 
 			el.addEventListener('load', () => {
-				this.shadowRoot.querySelectorAll('img:not([loading])').forEach(img => img.remove());
 				el.removeAttribute('loading');
+				setTimeout(() => {
+					this.shadowRoot.querySelectorAll('img:not([loading]):not(:last-child)')
+						.forEach(img => img.remove());
+				}, transitionTimeSecs * 1000);
+
+				// Warn parents
 				this.dispatchEvent(new CustomEvent('load', { detail: url }));
 			});
 
-			if (!whenReady) {
-				// Simulate that we are ready
-				el.dispatchEvent(new Event('load'));
-			}
+		}
+
+		if (!whenReady) {
+			// Simulate that we are ready on the first 'loading' element (should be only one)
+			this.shadowRoot.querySelector('[loading]').dispatchEvent(new Event('load'));
 		}
 
 		return this;
