@@ -18,19 +18,25 @@ export default class JehonImageLoading extends HTMLElement {
 		this.attachShadow({ mode: 'open' });
 		this.shadowRoot.innerHTML = `
             <style>
+				:host(*) {
+					display: block;
+					width: 100%;
+					height: 100%;
+				}
+
                 img {
-                    width: 50px;
-                    height: 50px;
-                    background-color: green;
-                    object-fit: contain;
 
                     width: 100%;
-                    height: 100%
+                    height: 100%;
+
+                    background-color: green;
+                    object-fit: contain;
                 }
 
                 img[state=loading] {
                     display: none;
                 }
+
             </style>
             <img src='${WaitingWheel}'>
 			<slot></slot>
