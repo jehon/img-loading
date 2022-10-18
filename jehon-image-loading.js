@@ -88,26 +88,26 @@ export default class JehonImageLoading extends HTMLElement {
 	 * @returns {JehonImageLoading} for chaining
 	 */
 	loadAndDisplayImage(url, whenReady = true) {
-		if (url == this.#currentURL) {
-			return;
+		if (url != this.#currentURL) {
+			this.#currentURL = url;
+
+			const el = document.createElement('img');
+			el.setAttribute('src', url);
+			el.setAttribute('loading', 1);
+			this.shadowRoot.appendChild(el);
+
+			el.addEventListener('load', () => {
+				this.shadowRoot.querySelectorAll('img:not([loading])').forEach(img => img.remove());
+				el.removeAttribute('loading');
+				this.dispatchEvent(new CustomEvent('load', { detail: url }));
+			});
+
+			if (!whenReady) {
+				// Simulate that we are ready
+				el.dispatchEvent(new Event('load'));
+			}
 		}
-		this.#currentURL = url;
 
-		const el = document.createElement('img');
-		el.setAttribute('src', url);
-		el.setAttribute('loading', 1);
-		this.shadowRoot.appendChild(el);
-
-		el.addEventListener('load', () => {
-			this.shadowRoot.querySelectorAll('img:not([loading])').forEach(img => img.remove());
-			el.removeAttribute('loading');
-			this.dispatchEvent(new CustomEvent('load', { detail: url }));
-		});
-
-		if (!whenReady) {
-			// Simulate that we are ready
-			el.dispatchEvent(new Event('load'));
-		}
 		return this;
 	}
 }
