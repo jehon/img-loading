@@ -8,6 +8,7 @@
     "publishConfig": {
         "access": "public"
     },
+    "main": "jehon-image-loading.js",
     "devDependencies": {
         "eslint": "8.25.0",
         "eslint-plugin-jsdoc": "39.3.13",
