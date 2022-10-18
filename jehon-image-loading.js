@@ -4,6 +4,14 @@ let WaitingWheel = root + '/waiting.png';
 
 const urlAttribute = 'src';
 const transitionTimeSecs = '0.5';
+/**
+ *
+ * System: 2 images presents
+ *
+ *  - img: the front image
+ *  - img[loading]: the image preparing
+ *
+ */
 
 export default class JehonImageLoading extends HTMLElement {
 	static setWaitingWheelUrl(url) {
@@ -14,6 +22,7 @@ export default class JehonImageLoading extends HTMLElement {
 		return [urlAttribute];
 	}
 
+	/** @type {string} The URL of the image (loading or already current) => the last request */
 	#currentURL = '';
 
 	constructor() {
@@ -51,12 +60,10 @@ export default class JehonImageLoading extends HTMLElement {
 		this.#currentURL = WaitingWheel;
 	}
 
-	attributeChangedCallback(attributeName, oldValue, newValue) {
+	attributeChangedCallback(attributeName, _oldValue, newValue) {
 		switch (attributeName) {
 			case urlAttribute:
-				if (newValue != oldValue) {
-					this.loadAndDisplayImage(newValue);
-				}
+				this.loadAndDisplayImage(newValue);
 				break;
 		}
 	}
