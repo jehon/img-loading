@@ -14,6 +14,8 @@ export default class JehonImageLoading extends HTMLElement {
 		return [urlAttribute];
 	}
 
+	#currentURL = '';
+
 	constructor() {
 		super();
 		this.attachShadow({ mode: 'open' });
@@ -45,6 +47,8 @@ export default class JehonImageLoading extends HTMLElement {
             <img src='${WaitingWheel}'>
 			<slot></slot>
         `;
+
+		this.#currentURL = WaitingWheel;
 	}
 
 	attributeChangedCallback(attributeName, oldValue, newValue) {
@@ -77,6 +81,11 @@ export default class JehonImageLoading extends HTMLElement {
 	 * @returns {JehonImageLoading} for chaining
 	 */
 	loadAndDisplayImage(url, whenReady = true) {
+		if (url == this.#currentURL) {
+			return;
+		}
+		this.#currentURL = url;
+
 		const el = document.createElement('img');
 		el.setAttribute('src', url);
 		el.setAttribute('loading', 1);
