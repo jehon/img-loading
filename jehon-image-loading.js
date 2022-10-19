@@ -5,11 +5,11 @@ const urlAttribute = 'src';
 /**
  * Sleep a bit
  *
- * @param {number} sec to wait
+ * @param {number} ms to wait
  * @returns {Promise} when waited
  */
-async function sleep(sec) {
-	return new Promise(resolve => setTimeout(resolve, sec * 1000));
+async function sleep(ms) {
+	return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 /**
