@@ -44,7 +44,7 @@ export default class JehonImageLoading extends HTMLElement {
 		this.attachShadow({ mode: 'open' });
 		this.shadowRoot.innerHTML = `
 			<style>
-				:host(*) {
+				:host {
 					display: block;
 					width: 100%;
 					height: 100%;
