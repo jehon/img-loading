@@ -27,9 +27,9 @@ export default class JehonImageLoading extends HTMLElement {
 		JehonImageLoading.#waitingWheel = url;
 	}
 
-	static #transitionTimeSecs = 0.250;
-	static setTransitionTimeSecs(secs) {
-		JehonImageLoading.#transitionTimeSecs = secs;
+	static #transitionTimeMs = 250;
+	static settransitionTimeMs(ms) {
+		JehonImageLoading.#transitionTimeMs = ms;
 	}
 
 	static get observedAttributes() {
@@ -61,7 +61,7 @@ export default class JehonImageLoading extends HTMLElement {
                     object-fit: contain;
 
 					opacity: 1;
-					transition: opacity ${JehonImageLoading.#transitionTimeSecs}s linear;
+					transition: opacity ${JehonImageLoading.#transitionTimeMs}ms ease;
                 }
 
 				img[loading] {
@@ -124,7 +124,7 @@ export default class JehonImageLoading extends HTMLElement {
 				el.removeAttribute('loading');
 
 				// Wait for animation to end
-				await sleep(Math.max(JehonImageLoading.#transitionTimeSecs, 0.001));
+				await sleep(Math.max(JehonImageLoading.#transitionTimeMs, 0.001));
 
 				this.shadowRoot.querySelectorAll('img:not([loading]):not(:last-of-type)')
 					.forEach(img => img.remove());
