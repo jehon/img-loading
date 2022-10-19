@@ -125,7 +125,7 @@ export default class JehonImageLoading extends HTMLElement {
 				// Wait for animation to end
 				await sleep(Math.max(JehonImageLoading.#transitionTimeSecs, 0.001));
 
-				this.shadowRoot.querySelectorAll('img:not([loading]):not(:last-child)')
+				this.shadowRoot.querySelectorAll('img:not([loading]):not(:last-of-type)')
 					.forEach(img => img.remove());
 
 				// Warn the parents
