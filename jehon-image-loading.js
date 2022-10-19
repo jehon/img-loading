@@ -1,9 +1,6 @@
 
 const root = import.meta.url.match(/.*\//);
-let WaitingWheel = root + '/waiting.png';
-
 const urlAttribute = 'src';
-const transitionTimeSecs = 0;
 /**
  *
  * System: 2 images presents
@@ -14,8 +11,14 @@ const transitionTimeSecs = 0;
  */
 
 export default class JehonImageLoading extends HTMLElement {
+	static #waitingWheel = root + '/waiting.png';
 	static setWaitingWheelUrl(url) {
-		WaitingWheel = url;
+		JehonImageLoading.#waitingWheel = url;
+	}
+
+	static #transitionTimeSecs = 0.250;
+	static setTransitionTimeSecs(secs) {
+		JehonImageLoading.#transitionTimeSecs = secs;
 	}
 
 	static get observedAttributes() {
@@ -29,7 +32,7 @@ export default class JehonImageLoading extends HTMLElement {
 		super();
 		this.attachShadow({ mode: 'open' });
 		this.shadowRoot.innerHTML = `
-            <style>
+			<style>
 				:host(*) {
 					display: block;
 					width: 100%;
@@ -47,19 +50,17 @@ export default class JehonImageLoading extends HTMLElement {
                     object-fit: contain;
 
 					opacity: 1;
-					transition: opacity ${transitionTimeSecs}s linear;
+					transition: opacity ${JehonImageLoading.#transitionTimeSecs}s linear;
                 }
 
-                img[loading] {
+				img[loading] {
                     opacity: 0;
                 }
-
             </style>
 			<slot></slot>
-            <img src='${WaitingWheel}' />
+			<img src='${JehonImageLoading.#waitingWheel}' />
         `;
-
-		this.#currentURL = WaitingWheel;
+		this.#currentURL = JehonImageLoading.#waitingWheel;
 	}
 
 	attributeChangedCallback(attributeName, _oldValue, newValue) {
@@ -77,7 +78,7 @@ export default class JehonImageLoading extends HTMLElement {
 	 * @returns {JehonImageLoading} for chaining
 	 */
 	loadImageWhileWaiting(url) {
-		this.loadAndDisplayImage(WaitingWheel, true);
+		this.loadAndDisplayImage(JehonImageLoading.#waitingWheel, true);
 		this.loadAndDisplayImage(url, false);
 		return this;
 	}
@@ -103,16 +104,17 @@ export default class JehonImageLoading extends HTMLElement {
 			this.shadowRoot.appendChild(el);
 
 			el.addEventListener('load', () => {
+				// Image is really ready
 				el.removeAttribute('loading');
+
 				setTimeout(() => {
 					this.shadowRoot.querySelectorAll('img:not([loading]):not(:last-child)')
 						.forEach(img => img.remove());
-				}, transitionTimeSecs * 1000);
+				}, JehonImageLoading.#transitionTimeSecs * 1000);
 
-				// Warn parents
+				// Warn the parents
 				this.dispatchEvent(new CustomEvent('load', { detail: url }));
 			});
-
 		}
 
 		if (!whenReady) {
