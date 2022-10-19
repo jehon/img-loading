@@ -15,26 +15,33 @@
 
 <body>
     Demo of img-loading
-    <div style="width:250px; height: 250px; background-color: gray">
+    <div style="width:750px; height: 500px; background-color: gray">
+        <button id='next'>Next</button>
         <jehon-image-loading src="/waiting/1.jpg">
             </jehon-img-loading>
     </div>
 
     <script type="module">
         import './jehon-image-loading.js'
+
+        function next() {
+            if (current > 2) {
+                return;
+            }
+            console.log(`loading ${current}`);
+            jil.loadAndDisplayImage(`/waiting/${current}.jpg`);
+            current++;
+            if (current > 2) current = 1;
+        }
+
+        document.querySelector('#next').addEventListener('click', () => next());
+
         const jil = document.querySelector("jehon-image-loading");
 
-        let next = 2;
+        let current = 2;
         jil.addEventListener('load', event => {
             console.log("loaded", event.detail);
-            setTimeout(() => {
-                if (next > 2) {
-                    return;
-                }
-                jil.loadAndDisplayImage(`/waiting/${next}.jpg`);
-                next++;
-                // if (next > 2) next = 1;
-            }, 2 * 1000);
+            // setTimeout(next, 2 * 1000);
         })
     </script>
 </body>
