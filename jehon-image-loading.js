@@ -110,7 +110,6 @@ export default class JehonImageLoading extends HTMLElement {
 
 			// Create the new element, as "loading"
 			const el = document.createElement('img');
-			el.setAttribute('src', url);
 			el.setAttribute('loading', 1);
 			this.shadowRoot.appendChild(el);
 
@@ -127,6 +126,7 @@ export default class JehonImageLoading extends HTMLElement {
 				// Warn the parents
 				this.dispatchEvent(new CustomEvent('load', { detail: url }));
 			});
+			el.setAttribute('src', url);
 		}
 
 		if (!whenReady) {
