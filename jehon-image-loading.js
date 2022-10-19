@@ -61,8 +61,7 @@ export default class JehonImageLoading extends HTMLElement {
                     object-fit: contain;
 
 					opacity: 1;
-					transition: opacity ${JehonImageLoading.#transitionTimeMs}ms ease;
-                }
+					transition: opacity ${JehonImageLoading.#transitionTimeMs}ms linear;
 
 				img[loading] {
                     opacity: 0;
