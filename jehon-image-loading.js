@@ -124,7 +124,7 @@ export default class JehonImageLoading extends HTMLElement {
 				el.removeAttribute('loading');
 
 				// Wait for animation to end
-				await sleep(Math.max(JehonImageLoading.#transitionTimeMs, 0.001));
+				await sleep(Math.max(JehonImageLoading.#transitionTimeMs, 1));
 
 				this.shadowRoot.querySelectorAll('img:not([loading]):not(:last-of-type)')
 					.forEach(img => img.remove());
