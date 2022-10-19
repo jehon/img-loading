@@ -62,6 +62,13 @@ export default class JehonImageLoading extends HTMLElement {
 
 					opacity: 1;
 					transition: opacity ${JehonImageLoading.#transitionTimeMs}ms linear;
+                }
+
+				img[legacy] {
+					opacity: 0;
+					/* Removing the image is done a bit later to avoid the 'black' passage */
+					transition-delay: ${JehonImageLoading.#transitionTimeMs / 2}ms
+				}
 
 				img[loading] {
                     opacity: 0;
@@ -120,12 +127,14 @@ export default class JehonImageLoading extends HTMLElement {
 				}
 
 				// Image is really ready
+				this.shadowRoot.querySelectorAll('img:not([loading])')
+					.forEach(img => img.setAttribute('legacy', 'legacy'));
 				el.removeAttribute('loading');
 
 				// Wait for animation to end
 				await sleep(2 * Math.max(JehonImageLoading.#transitionTimeMs, 1));
 
-				this.shadowRoot.querySelectorAll('img:not([loading]):not(:last-of-type)')
+				this.shadowRoot.querySelectorAll('img[legacy]')
 					.forEach(img => img.remove());
 
 				// Warn the parents
