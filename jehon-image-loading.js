@@ -114,6 +114,11 @@ export default class JehonImageLoading extends HTMLElement {
 			this.shadowRoot.appendChild(el);
 
 			el.addEventListener('load', async () => {
+				// Wait for the image to have dimensions
+				while (el.naturalWidth == 0 && el.naturalHeight == 0) {
+					await sleep(0.5);
+				}
+
 				// Image is really ready
 				el.removeAttribute('loading');
 
