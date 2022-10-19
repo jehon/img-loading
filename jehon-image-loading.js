@@ -1,6 +1,17 @@
 
 const root = import.meta.url.match(/.*\//);
 const urlAttribute = 'src';
+
+/**
+ * Sleep a bit
+ *
+ * @param {number} sec to wait
+ * @returns {Promise} when waited
+ */
+async function sleep(sec) {
+	return new Promise(resolve => setTimeout(resolve, sec * 1000));
+}
+
 /**
  *
  * System: 2 images presents
@@ -103,14 +114,15 @@ export default class JehonImageLoading extends HTMLElement {
 			el.setAttribute('loading', 1);
 			this.shadowRoot.appendChild(el);
 
-			el.addEventListener('load', () => {
+			el.addEventListener('load', async () => {
 				// Image is really ready
 				el.removeAttribute('loading');
 
-				setTimeout(() => {
-					this.shadowRoot.querySelectorAll('img:not([loading]):not(:last-child)')
-						.forEach(img => img.remove());
-				}, JehonImageLoading.#transitionTimeSecs * 1000);
+				// Wait for animation to end
+				await sleep(Math.max(JehonImageLoading.#transitionTimeSecs, 0.001));
+
+				this.shadowRoot.querySelectorAll('img:not([loading]):not(:last-child)')
+					.forEach(img => img.remove());
 
 				// Warn the parents
 				this.dispatchEvent(new CustomEvent('load', { detail: url }));
