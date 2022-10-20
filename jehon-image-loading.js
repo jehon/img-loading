@@ -117,7 +117,6 @@ export default class JehonImageLoading extends HTMLElement {
 			// Create the new element, as "loading"
 			const el = document.createElement('img');
 			el.setAttribute('loading', 1);
-			this.shadowRoot.appendChild(el);
 
 			el.addEventListener('load', async () => {
 				// Wait for the image to have dimensions
@@ -141,6 +140,7 @@ export default class JehonImageLoading extends HTMLElement {
 				this.dispatchEvent(new CustomEvent('load', { detail: url }));
 			});
 			el.setAttribute('src', url);
+			this.shadowRoot.appendChild(el);
 		}
 
 		if (!whenReady) {
