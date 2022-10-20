@@ -71,7 +71,7 @@ export default class JehonImageLoading extends HTMLElement {
 				}
 
 				img[loading] {
-                    opacity: 0;
+                    opacity: 0.01;
                 }
             </style>
 			<slot></slot>
