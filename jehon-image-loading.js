@@ -121,8 +121,8 @@ export default class JehonImageLoading extends HTMLElement {
 			el.addEventListener('load', async () => {
 				// Wait for the image to have dimensions
 				// Thanks to https://stackoverflow.com/a/57569491/1954789
-				while (el.naturalWidth == 0 && el.naturalHeight == 0) {
-					await sleep(0.5);
+				while (!el.naturalWidth || !el.naturalHeight) {
+					await sleep(100);
 				}
 
 				// Image is really ready
