@@ -69,10 +69,6 @@ export default class JehonImageLoading extends HTMLElement {
 					/* Removing the image is done a bit later to avoid the 'black' passage */
 					transition-delay: ${JehonImageLoading.#transitionTimeMs / 2}ms
 				}
-
-				img[loading] {
-                    opacity: 0.01;
-                }
             </style>
 			<slot></slot>
 			<img src='${JehonImageLoading.#waitingWheel}' />
@@ -105,51 +101,50 @@ export default class JehonImageLoading extends HTMLElement {
 	 * Stay on current image while the url-image is loading
 	 *
 	 * @param {string} url of the image to be loaded
-	 * @param {boolean?} whenReady if the image need to be displayed directly
+	 * @param {boolean?} waitUntillReady if the image need to be displayed directly
 	 * @returns {JehonImageLoading} for chaining
 	 */
-	loadAndDisplayImage(url, whenReady = true) {
+	async loadAndDisplayImage(url, waitUntillReady = true) {
 		if (url != this.#currentURL) {
 			this.#currentURL = url;
 
-			// All the others are now supposed to be loaded
-			this.querySelectorAll('img').forEach(el => el.removeAttribute('loading'));
+			const el = await this.preLoad(url, !waitUntillReady);
 
-			// Create the new element, as "loading"
-			const el = document.createElement('img');
-			el.setAttribute('loading', 1);
+			// Wait for the image to have dimensions
+			// Thanks to https://stackoverflow.com/a/57569491/1954789
+			while (!el.naturalWidth || !el.naturalHeight) {
+				await sleep(100);
 
-			el.addEventListener('load', async () => {
-				// Wait for the image to have dimensions
-				// Thanks to https://stackoverflow.com/a/57569491/1954789
-				while (!el.naturalWidth || !el.naturalHeight) {
-					await sleep(100);
-				}
+			}
 
-				// Image is really ready
-				this.shadowRoot.querySelectorAll('img:not([loading])')
-					.forEach(img => img.setAttribute('legacy', 'legacy'));
-				el.removeAttribute('loading');
-
-				// Wait for animation to end
-				await sleep(2 * Math.max(JehonImageLoading.#transitionTimeMs, 1));
-
-				this.shadowRoot.querySelectorAll('img[legacy]')
-					.forEach(img => img.remove());
-
-				// Warn the parents
-				this.dispatchEvent(new CustomEvent('load', { detail: url }));
-			});
-			el.setAttribute('src', url);
+			// Image is really ready
+			this.shadowRoot.querySelectorAll('img')
+				.forEach(img => img.setAttribute('legacy', 'legacy'));
 			this.shadowRoot.appendChild(el);
-		}
 
-		if (!whenReady) {
-			// Simulate that we are ready on the first 'loading' element (should be only one)
-			this.shadowRoot.querySelector('[loading]').dispatchEvent(new Event('load'));
+			// Wait for animation to end
+			await sleep(2 * Math.max(JehonImageLoading.#transitionTimeMs, 1));
+
+			this.shadowRoot.querySelectorAll('img[legacy]')
+				.forEach(img => img.remove());
+
+			// Warn the parents
+			this.dispatchEvent(new CustomEvent('load', { detail: url }));
 		}
 
 		return this;
+	}
+
+	async preLoad(url, nowait = false) {
+		return new Promise(resolve => {
+			const el = document.createElement('img');
+			if (nowait) {
+				resolve(el);
+			} else {
+				el.addEventListener('load', async () => resolve(el));
+			}
+			el.setAttribute('src', url);
+		});
 	}
 }
 
