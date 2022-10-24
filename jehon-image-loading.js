@@ -117,16 +117,7 @@ export default class JehonImageLoading extends HTMLElement {
 
 			}
 
-			// Image is really ready
-			this.shadowRoot.querySelectorAll('img')
-				.forEach(img => img.setAttribute('legacy', 'legacy'));
-			this.shadowRoot.appendChild(el);
-
-			// Wait for animation to end
-			await sleep(2 * Math.max(JehonImageLoading.#transitionTimeMs, 1));
-
-			this.shadowRoot.querySelectorAll('img[legacy]')
-				.forEach(img => img.remove());
+			await this.moveTo(el);
 
 			// Warn the parents
 			this.dispatchEvent(new CustomEvent('load', { detail: url }));
@@ -144,6 +135,22 @@ export default class JehonImageLoading extends HTMLElement {
 				el.addEventListener('load', async () => resolve(el));
 			}
 			el.setAttribute('src', url);
+		});
+	}
+
+	async moveTo(el) {
+		return new Promise(resolve => {
+			// Image is really ready
+			this.shadowRoot.querySelectorAll('img')
+				.forEach(img => img.setAttribute('legacy', 'legacy'));
+			this.shadowRoot.appendChild(el);
+
+			// Wait for animation to end
+			sleep(2 * Math.max(JehonImageLoading.#transitionTimeMs, 1))
+				.then(() => {
+					this.shadowRoot.querySelectorAll('img[legacy]').forEach(img => img.remove());
+					resolve();
+				});
 		});
 	}
 }
