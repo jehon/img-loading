@@ -27,7 +27,7 @@ export default class JehonImageLoading extends HTMLElement {
 		JehonImageLoading.#waitingWheel = url;
 	}
 
-	static #transitionTimeMs = 250;
+	static #transitionTimeMs = 2500;
 	static settransitionTimeMs(ms) {
 		JehonImageLoading.#transitionTimeMs = ms;
 	}
@@ -67,7 +67,11 @@ export default class JehonImageLoading extends HTMLElement {
 				img[legacy] {
 					opacity: 0;
 					/* Removing the image is done a bit later to avoid the 'black' passage */
-					transition-delay: ${JehonImageLoading.#transitionTimeMs / 2}ms
+					xxx-transition-delay: ${JehonImageLoading.#transitionTimeMs / 2}ms
+				}
+
+				img[loaded] {
+					opacity: 0.01;
 				}
             </style>
 			<slot></slot>
@@ -90,10 +94,10 @@ export default class JehonImageLoading extends HTMLElement {
 	 * @param {string} url of the image to be loaded
 	 * @returns {JehonImageLoading} for chaining
 	 */
-	loadImageWhileWaiting(url) {
+	async loadImageWhileWaiting(url) {
 		// Must run in parallel since the second one must be top
-		this.loadAndDisplayImage(JehonImageLoading.#waitingWheel, true);
-		this.loadAndDisplayImage(url, false);
+		await this.loadAndDisplayImage(JehonImageLoading.#waitingWheel, true);
+		await this.loadAndDisplayImage(url, false);
 		return this;
 	}
 
@@ -110,13 +114,6 @@ export default class JehonImageLoading extends HTMLElement {
 
 			const el = await this.#preLoad(url, !waitUntillReady);
 			await this.#moveTo(el);
-			// Wait for the image to have dimensions
-			// Thanks to https://stackoverflow.com/a/57569491/1954789
-			while (!el.naturalWidth || !el.naturalHeight) {
-				await sleep(100);
-
-			}
-
 		}
 
 		// Warn the parents (in all cases)
@@ -139,17 +136,33 @@ export default class JehonImageLoading extends HTMLElement {
 
 	async #moveTo(el) {
 		return new Promise(resolve => {
-			// Image is really ready
-			this.shadowRoot.querySelectorAll('img')
-				.forEach(img => img.setAttribute('legacy', 'legacy'));
+			el.setAttribute('loaded', 'loaded');
 			this.shadowRoot.appendChild(el);
 
-			// Wait for animation to end
-			sleep(2 * Math.max(JehonImageLoading.#transitionTimeMs, 1))
-				.then(() => {
-					this.shadowRoot.querySelectorAll('img[legacy]').forEach(img => img.remove());
-					resolve();
+			// Thanks to https://stackoverflow.com/a/24674486/1954789
+			// See https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame
+			//
+			// requestAnimationFrame = before drawing the next frame on the screen, execute this game logic/animation processing
+			//
+			requestAnimationFrame(() => {
+				requestAnimationFrame(() => {
+					requestAnimationFrame(() => {
+						el.removeAttribute('loaded');
+
+						// This will resolve when all img has finish "legacy" transition
+						Promise.all(Array.from(this.shadowRoot.querySelectorAll('img'))
+							.filter(img => img != el)
+							.map(img => new Promise(resolve => {
+								img.setAttribute('legacy', 'legacy');
+								img.addEventListener('transitionend', () => {
+									img.remove();
+									resolve(img);
+								});
+							})))
+							.then(() => resolve());
+					});
 				});
+			});
 		});
 	}
 }
