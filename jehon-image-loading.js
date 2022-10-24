@@ -108,8 +108,8 @@ export default class JehonImageLoading extends HTMLElement {
 		if (url != this.#currentURL) {
 			this.#currentURL = url;
 
-			const el = await this.preLoad(url, !waitUntillReady);
-
+			const el = await this.#preLoad(url, !waitUntillReady);
+			await this.#moveTo(el);
 			// Wait for the image to have dimensions
 			// Thanks to https://stackoverflow.com/a/57569491/1954789
 			while (!el.naturalWidth || !el.naturalHeight) {
@@ -117,16 +117,15 @@ export default class JehonImageLoading extends HTMLElement {
 
 			}
 
-			await this.moveTo(el);
-
-			// Warn the parents
-			this.dispatchEvent(new CustomEvent('load', { detail: url }));
 		}
+
+		// Warn the parents (in all cases)
+		this.dispatchEvent(new CustomEvent('load', { detail: url }));
 
 		return this;
 	}
 
-	async preLoad(url, nowait = false) {
+	async #preLoad(url, nowait = false) {
 		return new Promise(resolve => {
 			const el = document.createElement('img');
 			if (nowait) {
@@ -138,7 +137,7 @@ export default class JehonImageLoading extends HTMLElement {
 		});
 	}
 
-	async moveTo(el) {
+	async #moveTo(el) {
 		return new Promise(resolve => {
 			// Image is really ready
 			this.shadowRoot.querySelectorAll('img')
