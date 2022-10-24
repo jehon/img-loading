@@ -3,16 +3,6 @@ const root = import.meta.url.match(/.*\//);
 const urlAttribute = 'src';
 
 /**
- * Sleep a bit
- *
- * @param {number} ms to wait
- * @returns {Promise} when waited
- */
-async function sleep(ms) {
-	return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-/**
  *
  * System: 2 images presents
  *
