@@ -95,6 +95,7 @@ export default class JehonImageLoading extends HTMLElement {
 	 * @returns {JehonImageLoading} for chaining
 	 */
 	loadImageWhileWaiting(url) {
+		// Must run in parallel since the second one must be top
 		this.loadAndDisplayImage(JehonImageLoading.#waitingWheel, true);
 		this.loadAndDisplayImage(url, false);
 		return this;
