@@ -22,23 +22,27 @@
     </div>
 
     <script type="module">
-        import './jehon-image-loading.js'
-
-        function next() {
-            if (current > 2) {
-                return;
-            }
-            console.log(`loading ${current}`);
-            jil.loadAndDisplayImage(`/waiting/${current}.jpg`);
-            current++;
-            if (current > 2) current = 1;
-        }
-
-        document.querySelector('#next').addEventListener('click', () => next());
+        import './jehon-image-loading.js';
 
         const jil = document.querySelector("jehon-image-loading");
 
-        let current = 2;
+        const images = [
+            '/waiting/1.jpg',
+            '/waiting/2.jpg',
+        ];
+        let current = 0;
+
+        function next() {
+            current++;
+            if (current >= images.length) {
+                current = 0;
+            }
+            const img = images[current] + '?ts=' + new Date();
+            console.log(`loading ${current}: ${img}`);
+            jil.loadAndDisplayImage(img);
+        }
+
+        document.querySelector('#next').addEventListener('click', () => next());
         jil.addEventListener('load', event => {
             console.log("loaded", event.detail);
             // setTimeout(next, 2 * 1000);
