@@ -10,7 +10,7 @@
     },
     "main": "jehon-image-loading.js",
     "devDependencies": {
-        "eslint": "8.31.0",
+        "eslint": "8.32.0",
         "eslint-plugin-jsdoc": "39.6.4",
         "express": "4.18.2",
         "jasmine": "4.5.0",
